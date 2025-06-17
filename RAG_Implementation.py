@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
@@ -6,6 +7,7 @@ from langchain_community.vectorstores import FAISS
 from langchain.chains.retrieval_qa.base import RetrievalQA
 
 # Load your OpenAI API key
+load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY", None)
 if not openai_api_key:
     raise ValueError("OPENAI_API_KEY environment variable not set.")
