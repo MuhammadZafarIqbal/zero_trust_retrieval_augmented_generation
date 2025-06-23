@@ -1,4 +1,12 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Environments
+.env
+.envrc
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
 # dependencies
 /node_modules
