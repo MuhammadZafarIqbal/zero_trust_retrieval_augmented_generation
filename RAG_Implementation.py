@@ -29,5 +29,5 @@ qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
 
 # Ask a question
 query = "What did Einstein win the Nobel Prize for?"
-result = qa_chain.invoke(query)
+result = qa_chain.invoke({"query": query})
 print("Answer:", result)
