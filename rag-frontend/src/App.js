@@ -1,11 +1,10 @@
-//import './App.css';
 import React from 'react';
 import QueryForm from './QueryForm';
 
 function App() {
   return (
-    <div className="App">
-      <h1 style={{ textAlign: "center", marginTop: "2rem" }}> RAG Assistant</h1>
+    <div>
+      <h1 style={{ textAlign: 'center', marginTop: '1rem' }}>💬 RAG Chat</h1>
       <QueryForm />
     </div>
   );
