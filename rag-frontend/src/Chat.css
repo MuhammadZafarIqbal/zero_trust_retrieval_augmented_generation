@@ -6,6 +6,7 @@
     margin: auto;
     padding: 1rem;
     box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 
 .chat-box {
@@ -20,35 +21,45 @@
 
 .message {
     display: flex;
-    margin: 0.5rem 0;
+    margin-bottom: 1rem;
 }
 
 .message.user {
-    justify-content: flex-end;
+    flex-direction: row-reverse;
 }
 
-.message.bot {
-    justify-content: flex-start;
+.avatar {
+    font-size: 1.5rem;
+    margin: 0 0.5rem;
 }
 
-.message-content {
-    padding: 0.75rem 1rem;
+.bubble {
+    background-color: #e5e5ea;
+    color: #333;
     border-radius: 12px;
-    max-width: 80%;
-    word-wrap: break-word;
+    padding: 0.75rem 1rem;
+    max-width: 75%;
+    position: relative;
     line-height: 1.4;
 }
 
-.message.user .message-content {
+.message.user .bubble {
     background-color: #0078d4;
     color: white;
     border-top-right-radius: 0;
 }
 
-.message.bot .message-content {
+.message.bot .bubble {
     background-color: #e5e5ea;
     color: #333;
     border-top-left-radius: 0;
+}
+
+.timestamp {
+    font-size: 0.7rem;
+    color: gray;
+    text-align: right;
+    margin-top: 4px;
 }
 
 .chat-form {
@@ -72,4 +83,12 @@
     border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
+}
+
+.message.user .timestamp {
+    color: #ffffff;
+}
+
+.message.bot .timestamp {
+    color: #000000;
 }

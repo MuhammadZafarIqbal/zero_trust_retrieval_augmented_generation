@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import './Chat.css'; // we'll create this next
+import './Chat.css';
 
 function QueryForm() {
     const [question, setQuestion] = useState('');
@@ -16,11 +16,20 @@ function QueryForm() {
         scrollToBottom();
     }, [messages]);
 
+    const getTimestamp = () => {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
     const handleQuery = async (e) => {
         e.preventDefault();
         if (!question.trim()) return;
 
-        const userMessage = { type: 'user', text: question, timestamp: new Date() };
+        const userMessage = {
+            type: 'user',
+            text: question,
+            timestamp: getTimestamp(),
+        };
         setMessages((prev) => [...prev, userMessage]);
         setLoading(true);
         setQuestion('');
@@ -29,16 +38,22 @@ function QueryForm() {
             const formData = new FormData();
             formData.append('question', question);
             const res = await axios.post('http://localhost:8000/query', formData);
-            const answer = res.data.answer;
 
-            const botMessage = { type: 'bot', text: answer, timestamp: new Date() };
+            const botMessage = {
+                type: 'bot',
+                text: res.data.answer,
+                timestamp: getTimestamp(),
+            };
             setMessages((prev) => [...prev, botMessage]);
         } catch (err) {
-            const errorText =
-                typeof err.response?.data?.detail === 'string'
-                    ? err.response.data.detail
-                    : JSON.stringify(err.response?.data?.detail || err.message);
-            setMessages((prev) => [...prev, { type: 'bot', text: 'Error: ' + errorText }]);
+            setMessages((prev) => [
+                ...prev,
+                {
+                    type: 'bot',
+                    text: 'Error: Something went wrong.',
+                    timestamp: getTimestamp(),
+                },
+            ]);
         } finally {
             setLoading(false);
         }
@@ -49,7 +64,11 @@ function QueryForm() {
             <div className="chat-box">
                 {messages.map((msg, idx) => (
                     <div key={idx} className={`message ${msg.type}`}>
-                        <div className="message-content">{msg.text}</div>
+                        <div className="avatar">{msg.type === 'user' ? '🧑' : '🤖'}</div>
+                        <div className="bubble">
+                            <div>{msg.text}</div>
+                            <div className="timestamp">{msg.timestamp}</div>
+                        </div>
                     </div>
                 ))}
                 <div ref={chatEndRef} />
