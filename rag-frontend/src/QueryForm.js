@@ -1,55 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import './Chat.css';
 
 function QueryForm() {
     const [question, setQuestion] = useState('');
-    const [answer, setAnswer] = useState('');
+    const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
+    const chatEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const getTimestamp = () => {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
 
     const handleQuery = async (e) => {
         e.preventDefault();
+        if (!question.trim()) return;
+
+        const userMessage = {
+            type: 'user',
+            text: question,
+            timestamp: getTimestamp(),
+        };
+        setMessages((prev) => [...prev, userMessage]);
         setLoading(true);
+        setQuestion('');
+
         try {
             const formData = new FormData();
             formData.append('question', question);
-            const res = await axios.post('http://localhost:8000/query', formData, {
-                withCredentials: true,
-            });
-            setAnswer(res.data.answer);
+            const res = await axios.post('http://localhost:8000/query', formData);
+
+            const botMessage = {
+                type: 'bot',
+                text: res.data.answer,
+                timestamp: getTimestamp(),
+            };
+            setMessages((prev) => [...prev, botMessage]);
         } catch (err) {
-            let errorMsg = err.message;
-            if (err.response?.data?.detail) {
-                // detail could be string or object, handle both
-                errorMsg = typeof err.response.data.detail === 'string'
-                    ? err.response.data.detail
-                    : JSON.stringify(err.response.data.detail, null, 2);
-            }
-            setAnswer("Error: " + errorMsg);
+            setMessages((prev) => [
+                ...prev,
+                {
+                    type: 'bot',
+                    text: 'Error: Something went wrong.',
+                    timestamp: getTimestamp(),
+                },
+            ]);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div style={{ margin: "2rem" }}>
-            <h2>Ask the RAG System</h2>
-            <form onSubmit={handleQuery}>
+        <div className="chat-container">
+            <div className="chat-box">
+                {messages.map((msg, idx) => (
+                    <div key={idx} className={`message ${msg.type}`}>
+                        <div className="avatar">{msg.type === 'user' ? '🧑' : '🤖'}</div>
+                        <div className="bubble">
+                            <div>{msg.text}</div>
+                            <div className="timestamp">{msg.timestamp}</div>
+                        </div>
+                    </div>
+                ))}
+                <div ref={chatEndRef} />
+            </div>
+
+            <form className="chat-form" onSubmit={handleQuery}>
                 <input
                     type="text"
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="Type your question..."
-                    style={{ width: "60%", padding: "0.5rem" }}
+                    placeholder="Ask something..."
+                    disabled={loading}
                 />
-                <button type="submit" disabled={loading} style={{ marginLeft: "1rem" }}>
-                    {loading ? 'Asking...' : 'Ask'}
+                <button type="submit" disabled={loading || !question.trim()}>
+                    {loading ? '...' : 'Send'}
                 </button>
             </form>
-            {answer && (
-                <div style={{ marginTop: "1rem" }}>
-                    <strong>Answer:</strong> <p>{answer}</p>
-                </div>
-            )}
         </div>
     );
 }
