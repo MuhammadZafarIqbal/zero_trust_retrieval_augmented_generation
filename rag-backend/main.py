@@ -6,6 +6,7 @@ from utils.input_filteration_utils import (
     check_openai_moderation,
     validate_input
 )
+from auth import get_current_user
 
 app = FastAPI()
 qa_chain = load_rag_chain()
@@ -33,7 +34,7 @@ def login(user: str = Depends(authenticate)):
     return {"message": f"✅ Welcome, {user}!"}
 
 @app.post("/query")
-def query_rag(question: str = Form(...)):
+def query_rag(question: str = Form(...), user=Depends(get_current_user)):
     #question = "What are the vacation policies and who is Alice Johnson's manager?"
     user_role = "admin"
     
@@ -64,4 +65,5 @@ def query_rag(question: str = Form(...)):
     for doc in result["source_documents"]:
         print(f"- {doc.metadata['source']} (AccessLevel: {doc.metadata['access_level']})")
 
+    #print(f"User: {user['name']} ({user['preferred_username']})")
     return {"answer": result["result"]}
