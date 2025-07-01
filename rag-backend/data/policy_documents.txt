@@ -1,0 +1,15 @@
+PolicyID: 1
+PolicyTitle: Vacation Leave Policy
+PolicyBody: All full-time employees are entitled to 20 paid vacation days per year. Requests should be submitted at least 2 weeks in advance and approved by your manager.
+
+PolicyID: 2
+PolicyTitle: Sick Leave Policy
+PolicyBody: Employees receive 10 days of paid sick leave annually. Medical documentation may be required for absences longer than 3 days.
+
+PolicyID: 3
+PolicyTitle: Remote Work Policy
+PolicyBody: Eligible employees may work remotely up to 3 days per week, with manager approval. All remote work arrangements must follow IT security guidelines.
+
+PolicyID: 4
+PolicyTitle: Code of Conduct
+PolicyBody: Employees are expected to maintain professional behavior at all times. Discrimination, harassment, and unethical practices are strictly prohibited.

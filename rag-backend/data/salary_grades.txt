@@ -1,0 +1,29 @@
+GradeID: 1
+GradeName: Junior
+MinSalary: 50000
+MaxSalary: 70000
+Description: Entry-level positions for employees with 0-2 years of experience.
+
+GradeID: 2
+GradeName: Mid
+MinSalary: 70001
+MaxSalary: 100000
+Description: Experienced professionals with 3-5 years of experience.
+
+GradeID: 3
+GradeName: Senior
+MinSalary: 100001
+MaxSalary: 140000
+Description: Senior-level roles with 5+ years of experience and leadership responsibilities.
+
+GradeID: 4
+GradeName: Manager
+MinSalary: 120000
+MaxSalary: 160000
+Description: People managers, overseeing teams and budgets.
+
+GradeID: 5
+GradeName: Executive
+MinSalary: 160001
+MaxSalary: 250000
+Description: Executive leadership roles.
