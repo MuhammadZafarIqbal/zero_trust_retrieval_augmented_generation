@@ -1,12 +1,16 @@
 import React from 'react';
-import QueryForm from './QueryForm';
+import { MsalProvider } from '@azure/msal-react';
+import { PublicClientApplication } from '@azure/msal-browser';
+import { msalConfig } from './authConfig';
+import Home from './Home';
+
+const msalInstance = new PublicClientApplication(msalConfig);
 
 function App() {
   return (
-    <div>
-      <h1 style={{ textAlign: 'center', marginTop: '1rem' }}>💬 RAG Chat</h1>
-      <QueryForm />
-    </div>
+    <MsalProvider instance={msalInstance}>
+      <Home />
+    </MsalProvider>
   );
 }
 
