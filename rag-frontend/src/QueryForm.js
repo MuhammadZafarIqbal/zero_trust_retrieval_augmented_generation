@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import { useMsal } from '@azure/msal-react';
 import './Chat.css';
 
 function QueryForm() {
@@ -7,6 +8,8 @@ function QueryForm() {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const chatEndRef = useRef(null);
+
+    const { instance, accounts } = useMsal();
 
     const scrollToBottom = () => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -37,7 +40,21 @@ function QueryForm() {
         try {
             const formData = new FormData();
             formData.append('question', question);
-            const res = await axios.post('http://localhost:8000/query', formData);
+
+            const tokenRequest = {
+                scopes: ["user.read"],
+                account: accounts[0],
+            };
+
+            const resToken = await instance.acquireTokenSilent(tokenRequest);
+            const accessToken = resToken.accessToken;
+
+            // Call backend API with Authorization header
+            const res = await axios.post('http://localhost:8000/query', formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
 
             const botMessage = {
                 type: 'bot',
