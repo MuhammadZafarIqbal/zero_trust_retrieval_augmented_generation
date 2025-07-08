@@ -1,0 +1,62 @@
+EmployeeID: 101
+Name: Alice Johnson
+Department: Engineering
+JobTitle: Senior Software Engineer
+Location: New York
+Email: alice.johnson@company.com
+ManagerID: 201
+AccessLevel: INTERNAL
+
+EmployeeID: 102
+Name: Bob Smith
+Department: HR
+JobTitle: HR Generalist
+Location: Chicago
+Email: bob.smith@company.com
+ManagerID: 202
+AccessLevel: INTERNAL
+
+EmployeeID: 103
+Name: Carol Lee
+Department: Finance
+JobTitle: Financial Analyst
+Location: London
+Email: carol.lee@company.com
+ManagerID: 203
+AccessLevel: INTERNAL
+
+EmployeeID: 201
+Name: David Brown
+Department: Engineering
+JobTitle: Engineering Manager
+Location: New York
+Email: david.brown@company.com
+ManagerID: 301
+AccessLevel: INTERNAL
+
+EmployeeID: 202
+Name: Emma Davis
+Department: HR
+JobTitle: HR Manager
+Location: Chicago
+Email: emma.davis@company.com
+ManagerID: 301
+AccessLevel: INTERNAL
+
+EmployeeID: 203
+Name: Frank Wilson
+Department: Finance
+JobTitle: Finance Manager
+Location: London
+Email: frank.wilson@company.com
+ManagerID: 301
+AccessLevel: INTERNAL
+
+EmployeeID: 301
+Name: Grace Miller
+Department: Executive
+JobTitle: Chief Operations Officer
+Location: Headquarters
+Email: grace.miller@company.com
+ManagerID: null
+AccessLevel: INTERNAL

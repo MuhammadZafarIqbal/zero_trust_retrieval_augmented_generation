@@ -29,6 +29,12 @@ def login(user: str = Depends(authenticate)):
 
 @app.post("/query")
 def query_rag(question: str = Form(...)):
-    #query = "What did Einstein win the Nobel Prize for?"
+    #question = "What are the vacation policies and who is Alice Johnson's manager?"
     result = qa_chain.invoke({"query": question})
+
+    # Show answer and source info
+    print("\nSources:")
+    for doc in result["source_documents"]:
+        print(f"- {doc.metadata['source']} (AccessLevel: {doc.metadata['access_level']})")
+
     return {"answer": result["result"]}
