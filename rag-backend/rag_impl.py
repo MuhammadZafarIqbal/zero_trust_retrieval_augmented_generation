@@ -48,7 +48,7 @@ def load_rag_chain():
     qa_chain = RetrievalQA.from_chain_type(
         llm=llm,
         retriever=retriever,
-        return_source_documents=True  # helpful for debugging and UI
+        return_source_documents=True
     )
 
     return qa_chain

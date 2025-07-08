@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from rag_impl import load_rag_chain
+from utils.input_filteration_utils import classify_query
 
 app = FastAPI()
 qa_chain = load_rag_chain()
@@ -30,6 +31,13 @@ def login(user: str = Depends(authenticate)):
 @app.post("/query")
 def query_rag(question: str = Form(...)):
     #question = "What are the vacation policies and who is Alice Johnson's manager?"
+    
+    allowed, reason = classify_query("employee", question)
+    if not allowed:
+        result = {"result": "Query is Invalid! Please modfiy your query."}
+        return {"answer": result["result"]}
+        #raise HTTPException(status_code=403, detail=f"Blocked by policy: {reason}")
+
     result = qa_chain.invoke({"query": question})
 
     # Show answer and source info
