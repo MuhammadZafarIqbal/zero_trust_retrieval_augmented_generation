@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from rag_impl import load_rag_chain
-from utils.input_filteration_utils import classify_query
+from utils.input_filteration_utils import classify_query, check_openai_moderation
 
 app = FastAPI()
 qa_chain = load_rag_chain()
@@ -36,7 +36,11 @@ def query_rag(question: str = Form(...)):
     if not allowed:
         result = {"result": "Query is Invalid! Please modfiy your query."}
         return {"answer": result["result"]}
-        #raise HTTPException(status_code=403, detail=f"Blocked by policy: {reason}")
+
+    flagged = check_openai_moderation(question)
+    if flagged:
+        result = {"result": "Query is Abusive! Please modfiy your query."}
+        return {"answer": result["result"]}
 
     result = qa_chain.invoke({"query": question})
 

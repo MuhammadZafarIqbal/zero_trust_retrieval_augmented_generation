@@ -1,6 +1,7 @@
 from langchain.prompts import PromptTemplate
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
+from openai import OpenAI
 import json
 
 """
@@ -53,3 +54,9 @@ def classify_query(user_role, user_query):
         return parsed["allowed"], parsed["reason"]
     except Exception:
         return False, "Failed to parse classifier output"
+
+def check_openai_moderation(query: str) -> bool:
+    client = OpenAI()
+    response = client.moderations.create(model="omni-moderation-latest", input=query)
+    flagged = response.results[0].flagged
+    return flagged
