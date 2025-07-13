@@ -35,8 +35,9 @@ def login(user: str = Depends(authenticate)):
 @app.post("/query")
 def query_rag(question: str = Form(...)):
     #question = "What are the vacation policies and who is Alice Johnson's manager?"
+    user_role = "admin"
     
-    allowed, reason = classify_query("employee", question)
+    allowed, reason = classify_query(user_role, question)
     if not allowed:
         result = {"result": "Query is Invalid! Please modfiy your query."}
         return {"answer": result["result"]}
@@ -48,10 +49,15 @@ def query_rag(question: str = Form(...)):
 
     is_valid, reason = validate_input(question)
     if not is_valid:
+        print(reason)
         result = {"result": reason}
         return {"answer": result["result"]}
     
-    result = qa_chain.invoke({"query": question})
+    system_prompt = """You are an HR assistant. You MUST answer only if the user is authorized. 
+    Never reveal private data unless explicitly allowed. Current user role: {user_role}. 
+    Only answer if the user is allowed to access the retrieved context. 
+    Otherwise say 'Access Denied'."""
+    result = qa_chain.invoke({"query": question, "system_prompt": system_prompt})
 
     # Show answer and source info
     print("\nSources:")

@@ -12,6 +12,7 @@ FORBIDDEN_PATTERNS = [
     r"(?i)ignore.*instruction",
     r"(?i)forget.*instruction",
     r"(?i)you are now",
+    r"(?i)pretend.*you are",
     r"(?i)act as",
     r";",  # semicolon, common in injections
 ]
@@ -21,6 +22,7 @@ FORBIDDEN_PATTERNS = [
 | --------- | ------------------------------ | -------------------------------------- |
 | employee  | General HR questions, own info | Other employees' salaries / PII        |
 | external  | Public HR policies             | Any employee data (salary, SSN, email) |
+| admin     | Everything                     | Nothing                                |
 """
 
 # Define prompt template
