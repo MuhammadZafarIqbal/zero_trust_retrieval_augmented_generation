@@ -2,7 +2,19 @@ from langchain.prompts import PromptTemplate
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 from openai import OpenAI
+from fastapi import HTTPException
 import json
+import re
+
+MAX_QUERY_LENGTH = 1000
+
+FORBIDDEN_PATTERNS = [
+    r"(?i)ignore.*instruction",
+    r"(?i)forget.*instruction",
+    r"(?i)you are now",
+    r"(?i)act as",
+    r";",  # semicolon, common in injections
+]
 
 """
 | User Role | Allowed Queries                | Blocked Queries                        |
@@ -25,6 +37,9 @@ Company Policy:
 - Employees may ask about HR policies or their own info.
 - Employees may NOT ask for other employees' salaries, SSNs, emails, or personal records.
 
+- Admin may ask about anything inside the HR policeis, other's info, their own info, employee salaries, SSNs, emails, or personal records.
+- Admin is not restricted from anything.
+-
 Decide if this query is allowed.
 
 User Role: {user_role}
@@ -60,3 +75,16 @@ def check_openai_moderation(query: str) -> bool:
     response = client.moderations.create(model="omni-moderation-latest", input=query)
     flagged = response.results[0].flagged
     return flagged
+
+def validate_input(query: str):
+    if len(query) > MAX_QUERY_LENGTH:
+        return (False, "Query too long")
+    if contains_forbidden_patterns(query):
+        return (False, "Query blocked by policy")
+    return (True, None)
+
+def contains_forbidden_patterns(query: str) -> bool:
+    for pattern in FORBIDDEN_PATTERNS:
+        if re.search(pattern, query):
+            return True
+    return False

@@ -1,7 +1,11 @@
 from fastapi import FastAPI, HTTPException, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from rag_impl import load_rag_chain
-from utils.input_filteration_utils import classify_query, check_openai_moderation
+from utils.input_filteration_utils import (
+    classify_query, 
+    check_openai_moderation,
+    validate_input
+)
 
 app = FastAPI()
 qa_chain = load_rag_chain()
@@ -42,6 +46,11 @@ def query_rag(question: str = Form(...)):
         result = {"result": "Query is Abusive! Please modfiy your query."}
         return {"answer": result["result"]}
 
+    is_valid, reason = validate_input(question)
+    if not is_valid:
+        result = {"result": reason}
+        return {"answer": result["result"]}
+    
     result = qa_chain.invoke({"query": question})
 
     # Show answer and source info
