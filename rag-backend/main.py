@@ -19,19 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Simple in-memory user auth
-fake_users = {
-    "zafar": "123"
-}
-
-def authenticate(username: str = Form(...), password: str = Form(...)):
-    if fake_users.get(username) != password:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    return username
-
-@app.post("/login")
-def login(user: str = Depends(authenticate)):
-    return {"message": f"✅ Welcome, {user}!"}
 
 @app.post("/query")
 def query_rag(question: str = Form(...), user=Depends(get_current_user)):
