@@ -1,6 +1,11 @@
 from fastapi import FastAPI, HTTPException, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from rag_impl import load_rag_chain
+from utils.input_filteration_utils import (
+    classify_query, 
+    check_openai_moderation,
+    validate_input
+)
 
 app = FastAPI()
 qa_chain = load_rag_chain()
@@ -30,7 +35,29 @@ def login(user: str = Depends(authenticate)):
 @app.post("/query")
 def query_rag(question: str = Form(...)):
     #question = "What are the vacation policies and who is Alice Johnson's manager?"
-    result = qa_chain.invoke({"query": question})
+    user_role = "admin"
+    
+    allowed, reason = classify_query(user_role, question)
+    if not allowed:
+        result = {"result": "Query is Invalid! Please modfiy your query."}
+        return {"answer": result["result"]}
+
+    flagged = check_openai_moderation(question)
+    if flagged:
+        result = {"result": "Query is Abusive! Please modfiy your query."}
+        return {"answer": result["result"]}
+
+    is_valid, reason = validate_input(question)
+    if not is_valid:
+        print(reason)
+        result = {"result": reason}
+        return {"answer": result["result"]}
+    
+    system_prompt = """You are an HR assistant. You MUST answer only if the user is authorized. 
+    Never reveal private data unless explicitly allowed. Current user role: {user_role}. 
+    Only answer if the user is allowed to access the retrieved context. 
+    Otherwise say 'Access Denied'."""
+    result = qa_chain.invoke({"query": question, "system_prompt": system_prompt})
 
     # Show answer and source info
     print("\nSources:")

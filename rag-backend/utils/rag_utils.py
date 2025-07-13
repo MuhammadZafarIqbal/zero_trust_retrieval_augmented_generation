@@ -20,8 +20,18 @@ def get_raw_data(data_folder, file_names, ):
                     page_content=content,
                     metadata={
                         "source": file_name,
-                        "access_level": access_level
+                        "access_level": access_level.lower()
                     }
                 )
                 raw_documents.append(doc)
     return raw_documents
+
+def set_allowed_access_level(user_role: str) -> set[str]:
+    if user_role == "external":
+        return {"public"}
+    elif user_role == "employee":
+        return {"public", "internal"}
+    elif user_role == "admin":
+        return {"public", "internal", "confidential"}
+    else:
+        return set()
