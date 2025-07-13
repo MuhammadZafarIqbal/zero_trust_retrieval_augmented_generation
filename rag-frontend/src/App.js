@@ -1,8 +1,6 @@
 import React from 'react';
 import { MsalProvider } from '@azure/msal-react';
 import { PublicClientApplication } from '@azure/msal-browser';
-import { msalConfig } from './authConfig';
-
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,6 +8,7 @@ import {
   Navigate
 } from 'react-router-dom';
 
+import { msalConfig } from './authConfig';
 import Home from './Home';
 import QueryForm from './QueryForm';
 

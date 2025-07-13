@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useMsal } from '@azure/msal-react';
 import './Chat.css';
+import { loginRequest } from './authConfig';
 
 function QueryForm() {
     const [question, setQuestion] = useState('');
@@ -38,11 +39,8 @@ function QueryForm() {
         setQuestion('');
 
         try {
-            const formData = new FormData();
-            formData.append('question', question);
-
             const tokenRequest = {
-                scopes: ["user.read"],
+                scopes: ["api://6e3a0f77-a606-43cd-83ab-6b9181b1222f/access_as_user"],
                 account: accounts[0],
             };
 
@@ -50,9 +48,11 @@ function QueryForm() {
             const accessToken = resToken.accessToken;
 
             // Call backend API with Authorization header
-            const res = await axios.post('http://localhost:8000/query', formData, {
+
+            const res = await axios.post('http://localhost:8000/query', { question }, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
                 },
             });
 

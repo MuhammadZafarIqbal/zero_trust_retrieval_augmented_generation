@@ -1,6 +1,7 @@
 import React from 'react';
 import { useMsal } from '@azure/msal-react';
 import { useNavigate } from 'react-router-dom';
+import { loginRequest } from './authConfig';
 
 function Home() {
     const { instance, accounts } = useMsal();
@@ -9,12 +10,11 @@ function Home() {
 
     const handleLogin = () => {
         if (accounts.length === 0) {
-            instance.loginPopup({
-                scopes: ["user.read"]
-            }).then(() => {
-                // Login successful, navigate to QueryForm page
-                navigate('/query');
-            }).catch(e => console.error(e));
+            instance.loginPopup(loginRequest)
+                .then(() => {
+                    // Login successful, navigate to QueryForm page
+                    navigate('/query');
+                }).catch(e => console.error(e));
         } else {
             console.log('User already logged in:', accounts[0]);
             navigate('/query');

@@ -9,3 +9,7 @@ export const msalConfig = {
         storeAuthStateInCookie: false,
     },
 };
+
+export const loginRequest = {
+    scopes: ["api://6e3a0f77-a606-43cd-83ab-6b9181b1222f/access_as_user"]
+};

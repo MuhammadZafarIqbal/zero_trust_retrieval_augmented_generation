@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from rag_impl import load_rag_chain
 from utils.input_filteration_utils import (
     classify_query, 
@@ -19,11 +20,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class QueryRequest(BaseModel):
+    question: str
 
 @app.post("/query")
-def query_rag(question: str = Form(...), user=Depends(get_current_user)):
+def query_rag(data: QueryRequest, user=Depends(get_current_user)):
     #question = "What are the vacation policies and who is Alice Johnson's manager?"
     user_role = "admin"
+    question = data.question
     
     allowed, reason = classify_query(user_role, question)
     if not allowed:
