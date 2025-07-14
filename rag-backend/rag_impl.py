@@ -5,7 +5,7 @@ from langchain_text_splitters import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain.chains.retrieval_qa.base import RetrievalQA
-from utils.rag_utils import get_raw_data, set_allowed_access_level
+from utils.rag_utils import get_raw_data
 
 # Load your OpenAI API key
 load_dotenv()
@@ -14,7 +14,6 @@ if not openai_api_key:
     raise ValueError("OPENAI_API_KEY environment variable not set.")
 
 def load_rag_chain():
-    user_role = "admin"
     # Paths and filenames
     data_folder = Path("data")
     file_names = [
@@ -35,15 +34,8 @@ def load_rag_chain():
     vectorstore = FAISS.from_documents(split_docs, embeddings)
 
     #Create a retriever with access-level filtering
-    ALLOWED_LEVELS = set_allowed_access_level(user_role)
-    retriever = vectorstore.as_retriever(
-        search_type="similarity",
-        search_kwargs={
-            "k": 4,
-            "filter": {"access_level": {"$in": ALLOWED_LEVELS}}  # Zero Trust style enforcement
-        }
-    )
-
+    retriever = vectorstore.as_retriever(search_type="similarity",)
+    
     #Build QA chain
     llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0, api_key=openai_api_key)
     qa_chain = RetrievalQA.from_chain_type(

@@ -27,6 +27,7 @@ def get_raw_data(data_folder, file_names, ):
     return raw_documents
 
 def set_allowed_access_level(user_role: str) -> set[str]:
+    user_role = user_role.lower()
     if user_role == "external":
         return {"public"}
     elif user_role == "employee":

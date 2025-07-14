@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useMsal } from '@azure/msal-react';
+import { useLocation } from 'react-router-dom';
 import './Chat.css';
 import { loginRequest } from './authConfig';
 
@@ -11,6 +12,8 @@ function QueryForm() {
     const chatEndRef = useRef(null);
 
     const { instance, accounts } = useMsal();
+    const location = useLocation();
+    const role = location.state?.role || 'Public'; // fallback to 'Public'
 
     const scrollToBottom = () => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -49,7 +52,10 @@ function QueryForm() {
 
             // Call backend API with Authorization header
 
-            const res = await axios.post('http://localhost:8000/query', { question }, {
+            const res = await axios.post('http://localhost:8000/query', {
+                question,
+                role,
+            }, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     'Content-Type': 'application/json',
