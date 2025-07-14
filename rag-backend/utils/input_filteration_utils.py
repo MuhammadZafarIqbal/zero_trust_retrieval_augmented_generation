@@ -18,11 +18,11 @@ FORBIDDEN_PATTERNS = [
 ]
 
 """
-| User Role | Allowed Queries                | Blocked Queries                        |
-| --------- | ------------------------------ | -------------------------------------- |
-| employee  | General HR questions, own info | Other employees' salaries / PII        |
-| external  | Public HR policies             | Any employee data (salary, SSN, email) |
-| admin     | Everything                     | Nothing                                |
+| User Role | Allowed Queries                       | Blocked Queries                        |
+| --------- | ------------------------------------- | -------------------------------------- |
+| employee  | General HR questions, own info        | Other employees' salaries / PII        |
+| external  | Public HR policies                    | Any employee data (salary, SSN, email) |
+| admin     | Any employee data (salary, SSN, email)| Nothing                                |
 """
 
 # Define prompt template
@@ -39,9 +39,9 @@ Company Policy:
 - Employees may ask about HR policies or their own info.
 - Employees may NOT ask for other employees' salaries, SSNs, emails, or personal records.
 
-- Admin may ask about anything inside the HR policeis, other's info, their own info, employee salaries, SSNs, emails, or personal records.
+- Admin may ask about anything inside the HR policeis, other's info, their own info, employee salaries, salaries by roles, SSNs, emails, or personal records.
 - Admin is not restricted from anything.
--
+
 Decide if this query is allowed.
 
 User Role: {user_role}

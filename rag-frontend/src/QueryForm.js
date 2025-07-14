@@ -1,12 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import { useMsal } from '@azure/msal-react';
+import { useLocation } from 'react-router-dom';
 import './Chat.css';
+import { loginRequest } from './authConfig';
 
 function QueryForm() {
     const [question, setQuestion] = useState('');
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const chatEndRef = useRef(null);
+
+    const { instance, accounts } = useMsal();
+    const location = useLocation();
+    const role = location.state?.role || 'Public'; // fallback to 'Public'
 
     const scrollToBottom = () => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -35,9 +42,25 @@ function QueryForm() {
         setQuestion('');
 
         try {
-            const formData = new FormData();
-            formData.append('question', question);
-            const res = await axios.post('http://localhost:8000/query', formData);
+            const tokenRequest = {
+                scopes: ["api://6e3a0f77-a606-43cd-83ab-6b9181b1222f/access_as_user"],
+                account: accounts[0],
+            };
+
+            const resToken = await instance.acquireTokenSilent(tokenRequest);
+            const accessToken = resToken.accessToken;
+
+            // Call backend API with Authorization header
+
+            const res = await axios.post('http://localhost:8000/query', {
+                question,
+                role,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            });
 
             const botMessage = {
                 type: 'bot',
