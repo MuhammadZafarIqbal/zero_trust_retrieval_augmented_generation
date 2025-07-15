@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useMsal } from '@azure/msal-react';
 import { useLocation } from 'react-router-dom';
-import './Chat.css';
 import { loginRequest } from './authConfig';
 
 function QueryForm() {
@@ -51,7 +50,6 @@ function QueryForm() {
             const accessToken = resToken.accessToken;
 
             // Call backend API with Authorization header
-
             const res = await axios.post('http://localhost:8000/query', {
                 question,
                 role,
@@ -83,32 +81,40 @@ function QueryForm() {
     };
 
     return (
-        <div className="chat-container">
-            <div className="chat-box">
-                {messages.map((msg, idx) => (
-                    <div key={idx} className={`message ${msg.type}`}>
-                        <div className="avatar">{msg.type === 'user' ? '🧑' : '🤖'}</div>
-                        <div className="bubble">
-                            <div>{msg.text}</div>
-                            <div className="timestamp">{msg.timestamp}</div>
+        <div className="min-h-screen bg-trusteq text-white flex flex-col items-center py-8 px-4">
+            <div className="w-full bg-blue-50 max-w-2xl rounded-xl shadow-lg p-6 space-y-4">
+                <h2 className="text-xl text-trusteq font-bold text-center">Chat with Zero Trust AI</h2>
+                <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+                    {messages.map((msg, idx) => (
+                        <div key={idx} className={`flex items-start gap-3 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            {msg.type === 'bot' && <div className="text-2xl">🤖</div>}
+                            <div className={`rounded-lg px-4 py-2 max-w-xs shadow-sm ${msg.type === 'user' ? 'bg-trusteq text-white' : 'bg-trusteq-light text-white'}`}>
+                                <p>{msg.text}</p>
+                                <p className="text-xs text-gray-300 mt-1 text-right">{msg.timestamp}</p>
+                            </div>
+                            {msg.type === 'user' && <div className="text-2xl">🧑</div>}
                         </div>
-                    </div>
-                ))}
-                <div ref={chatEndRef} />
+                    ))}
+                    <div ref={chatEndRef} />
+                </div>
+                <form className="flex gap-2" onSubmit={handleQuery}>
+                    <input
+                        type="text"
+                        value={question}
+                        onChange={(e) => setQuestion(e.target.value)}
+                        placeholder="Ask something..."
+                        disabled={loading}
+                        className="border border-gray-300 flex-1 px-4 py-2 rounded-lg bg-gray-100 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-trusteq"
+                    />
+                    <button
+                        type="submit"
+                        disabled={loading || !question.trim()}
+                        className="bg-trusteq hover:bg-trusteq-light text-white px-4 py-2 rounded-lg transition"
+                    >
+                        {loading ? '...' : 'Send'}
+                    </button>
+                </form>
             </div>
-
-            <form className="chat-form" onSubmit={handleQuery}>
-                <input
-                    type="text"
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="Ask something..."
-                    disabled={loading}
-                />
-                <button type="submit" disabled={loading || !question.trim()}>
-                    {loading ? '...' : 'Send'}
-                </button>
-            </form>
         </div>
     );
 }
