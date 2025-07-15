@@ -4,6 +4,7 @@ from presidio_analyzer import (
     Pattern
 )
 from presidio_anonymizer import AnonymizerEngine
+from openai import OpenAI
 
 analyzer = AnalyzerEngine()
 anonymizer = AnonymizerEngine()
@@ -61,3 +62,8 @@ def presidio_post_process(user_role: str, user_name: str, text: str) -> str:
 
     anonymized_result = anonymizer.anonymize(text=text, analyzer_results=results)
     return anonymized_result.text
+
+def is_flagged_by_openai_moderation(result):
+    client = OpenAI()
+    response = client.moderations.create(input=result)
+    return response.results[0].flagged

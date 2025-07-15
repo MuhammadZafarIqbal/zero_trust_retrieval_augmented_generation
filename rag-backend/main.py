@@ -8,7 +8,10 @@ from utils.input_filteration_utils import (
     check_openai_moderation,
     validate_input
 )
-from utils.output_filteration_utils import presidio_post_process
+from utils.output_filteration_utils import (
+    presidio_post_process,
+    is_flagged_by_openai_moderation
+)
 from auth import get_current_user
 
 app = FastAPI()
@@ -67,5 +70,10 @@ def query_rag(data: QueryRequest, user=Depends(get_current_user)):
     # Post-process with Presidio
     result["result"] = presidio_post_process(user_role, user_name, llm_output)
 
+    flagged = is_flagged_by_openai_moderation(result["result"])
+    if flagged:
+        result = {"result": "Sorry my response was Abusive! Please modfiy your query. or try again!"}
+        return {"answer": result["result"]}
+    
     #print(f"User: {user['name']} ({user['preferred_username']})")
     return {"answer": result["result"]}
