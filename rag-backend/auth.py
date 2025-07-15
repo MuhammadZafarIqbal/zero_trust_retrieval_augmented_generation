@@ -58,6 +58,10 @@ async def get_current_user(authorization: str = Header(...)):
             algorithms=["RS256"],
             audience=AUDIENCE
         )
-        return payload
+        user = {
+            "name": payload.get("name"),
+            "preferred_username": payload.get("preferred_username"),
+        }
+        return user
     except JWTError as e:
         raise HTTPException(status_code=401, detail=str(e))

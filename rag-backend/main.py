@@ -8,6 +8,10 @@ from utils.input_filteration_utils import (
     check_openai_moderation,
     validate_input
 )
+from utils.output_filteration_utils import (
+    presidio_post_process,
+    is_flagged_by_openai_moderation
+)
 from auth import get_current_user
 
 app = FastAPI()
@@ -30,7 +34,8 @@ def query_rag(data: QueryRequest, user=Depends(get_current_user)):
     #question = "What are the vacation policies and who is Alice Johnson's manager?"
     user_role = data.role
     question = data.question
-    ALLOWED_LEVELS = set_allowed_access_level(user_role)
+    user_name = user["name"]
+    
 
     allowed, reason = classify_query(user_role, question)
     if not allowed:
@@ -52,6 +57,7 @@ def query_rag(data: QueryRequest, user=Depends(get_current_user)):
     Never reveal private data unless explicitly allowed. Current user role: {user_role}. 
     Only answer if the user is allowed to access the retrieved context. 
     Otherwise say 'Access Denied'."""
+    ALLOWED_LEVELS = set_allowed_access_level(user_role)
     qa_chain.retriever.search_kwargs["filter"] = {"access_level": {"$in": ALLOWED_LEVELS}}
     result = qa_chain.invoke({"query": question, "system_prompt": system_prompt})
 
@@ -60,5 +66,14 @@ def query_rag(data: QueryRequest, user=Depends(get_current_user)):
     for doc in result["source_documents"]:
         print(f"- {doc.metadata['source']} (AccessLevel: {doc.metadata['access_level']})")
 
+    llm_output = result["result"]
+    # Post-process with Presidio
+    result["result"] = presidio_post_process(user_role, user_name, llm_output)
+
+    flagged = is_flagged_by_openai_moderation(result["result"])
+    if flagged:
+        result = {"result": "Sorry my response was Abusive! Please modfiy your query. or try again!"}
+        return {"answer": result["result"]}
+    
     #print(f"User: {user['name']} ({user['preferred_username']})")
     return {"answer": result["result"]}
