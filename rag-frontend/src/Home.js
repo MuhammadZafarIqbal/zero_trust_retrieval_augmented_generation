@@ -32,7 +32,7 @@ function Home() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-trusteq px-4">
             <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md space-y-6">
                 {/* Branding */}
                 <div className="flex justify-center items-center gap-4 mb-2">
