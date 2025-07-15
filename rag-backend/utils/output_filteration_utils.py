@@ -1,9 +1,27 @@
-from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer import (
+    AnalyzerEngine, 
+    PatternRecognizer, 
+    Pattern
+)
 from presidio_anonymizer import AnonymizerEngine
-
 
 analyzer = AnalyzerEngine()
 anonymizer = AnonymizerEngine()
+
+# Create Pattern object
+emp_pattern = Pattern(
+    name="EmployeeID", 
+    regex=r"EmployeeID\s*\d+", 
+    score=0.85
+)
+
+# Pass list of Pattern objects
+emp_id_recognizer = PatternRecognizer(
+    supported_entity="EMPLOYEE_ID",
+    patterns=[emp_pattern]
+)
+
+analyzer.registry.add_recognizer(emp_id_recognizer)
 
 def presidio_post_process(text: str) -> str:
     results = analyzer.analyze(text=text, language='en')
