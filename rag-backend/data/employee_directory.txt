@@ -60,3 +60,12 @@ Location: Headquarters
 Email: grace.miller@company.com
 ManagerID: null
 AccessLevel: INTERNAL
+
+EmployeeID: 401
+Name: Muhammad Zafar Nazir
+Department: Engineering
+JobTitle: Junior Software Engineer
+Location: Munich
+Email: zafar.nazir@company.com
+ManagerID: 201
+AccessLevel: INTERNAL

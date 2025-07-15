@@ -37,19 +37,27 @@ def add_custom_recognizer():
     analyzer.registry.add_recognizer(manager_id_recognizer)
 
 
-def presidio_post_process(user_role: str, text: str) -> str:
+def presidio_post_process(user_role: str, user_name: str, text: str) -> str:
     if(user_role.lower()=="admin"):
         return text
-    if(user_role.lower()=="public"):
-        add_custom_recognizer()
-
+    
+    add_custom_recognizer()
     results = analyzer.analyze(text=text, language='en')
     if not results:
         return text
     
-    #Printing for now, later will help in logging
-    for entity in results:
-        print(f"Detected {entity.entity_type} at {entity.start}-{entity.end}")
+    if(user_role.lower()=="employee"):
+        filtered_results = []
     
+        for entity in results:
+            entity_text = text[entity.start:entity.end]
+
+            # Skip redacting the employee's own name
+            if entity.entity_type == "PERSON" and user_name.lower() in entity_text.lower():
+                    print(f"Skipping redaction for user_name match: {entity_text}")
+                    continue
+            filtered_results.append(entity)
+        results=filtered_results
+
     anonymized_result = anonymizer.anonymize(text=text, analyzer_results=results)
     return anonymized_result.text
