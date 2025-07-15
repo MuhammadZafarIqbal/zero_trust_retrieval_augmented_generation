@@ -22,7 +22,19 @@ def add_custom_recognizer():
         patterns=[emp_pattern]
     )
 
+    manager_id_pattern = Pattern(
+        name="ManagerID", 
+        regex=r"ManagerID\s*\d+", 
+        score=0.85
+    )
+
+    manager_id_recognizer = PatternRecognizer(
+        supported_entity="MANAGER_ID",
+        patterns=[manager_id_pattern]
+    )
+
     analyzer.registry.add_recognizer(emp_id_recognizer)
+    analyzer.registry.add_recognizer(manager_id_recognizer)
 
 
 def presidio_post_process(user_role: str, text: str) -> str:
