@@ -8,6 +8,7 @@ from utils.input_filteration_utils import (
     check_openai_moderation,
     validate_input
 )
+from utils.output_filteration_utils import presidio_post_process
 from auth import get_current_user
 
 app = FastAPI()
@@ -59,6 +60,10 @@ def query_rag(data: QueryRequest, user=Depends(get_current_user)):
     print("\nSources:")
     for doc in result["source_documents"]:
         print(f"- {doc.metadata['source']} (AccessLevel: {doc.metadata['access_level']})")
+
+    llm_output = result["result"]
+    # Post-process with Presidio
+    result["result"] = presidio_post_process(llm_output)
 
     #print(f"User: {user['name']} ({user['preferred_username']})")
     return {"answer": result["result"]}
