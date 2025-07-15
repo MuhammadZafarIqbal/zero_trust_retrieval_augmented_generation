@@ -63,7 +63,7 @@ def query_rag(data: QueryRequest, user=Depends(get_current_user)):
 
     llm_output = result["result"]
     # Post-process with Presidio
-    result["result"] = presidio_post_process(llm_output)
+    result["result"] = presidio_post_process(user_role, llm_output)
 
     #print(f"User: {user['name']} ({user['preferred_username']})")
     return {"answer": result["result"]}

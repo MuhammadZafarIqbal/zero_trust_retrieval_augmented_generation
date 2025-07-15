@@ -8,22 +8,29 @@ from presidio_anonymizer import AnonymizerEngine
 analyzer = AnalyzerEngine()
 anonymizer = AnonymizerEngine()
 
-# Create Pattern object
-emp_pattern = Pattern(
-    name="EmployeeID", 
-    regex=r"EmployeeID\s*\d+", 
-    score=0.85
-)
+def add_custom_recognizer():
+    # Create Pattern object
+    emp_pattern = Pattern(
+        name="EmployeeID", 
+        regex=r"EmployeeID\s*\d+", 
+        score=0.85
+    )
 
-# Pass list of Pattern objects
-emp_id_recognizer = PatternRecognizer(
-    supported_entity="EMPLOYEE_ID",
-    patterns=[emp_pattern]
-)
+    # Pass list of Pattern objects
+    emp_id_recognizer = PatternRecognizer(
+        supported_entity="EMPLOYEE_ID",
+        patterns=[emp_pattern]
+    )
 
-analyzer.registry.add_recognizer(emp_id_recognizer)
+    analyzer.registry.add_recognizer(emp_id_recognizer)
 
-def presidio_post_process(text: str) -> str:
+
+def presidio_post_process(user_role: str, text: str) -> str:
+    if(user_role.lower()=="admin"):
+        return text
+    if(user_role.lower()=="public"):
+        add_custom_recognizer()
+
     results = analyzer.analyze(text=text, language='en')
     if not results:
         return text
