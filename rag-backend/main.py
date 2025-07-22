@@ -34,7 +34,6 @@ class QueryRequest(BaseModel):
 
 @app.post("/query")
 def query_rag(data: QueryRequest, user=Depends(get_current_user)):
-    #question = "What are the vacation policies and who is Alice Johnson's manager?"
     user_role = data.role
     question = data.question
     user_name = user["name"]
