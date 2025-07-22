@@ -1,4 +1,5 @@
 from langchain_core.documents import Document
+import logging
 
 def get_raw_data(data_folder, file_names, ):
     raw_documents = []
@@ -36,3 +37,12 @@ def set_allowed_access_level(user_role: str) -> set[str]:
         return {"public", "internal", "confidential"}
     else:
         return set()
+
+def load_logger():
+    # Setup logger
+    logger = logging.getLogger("rag_logger")
+    logger.setLevel(logging.INFO)
+    handler = logging.FileHandler("rag.log")
+    handler.setFormatter(logging.Formatter('%(message)s'))
+    logger.addHandler(handler)
+    return logger
