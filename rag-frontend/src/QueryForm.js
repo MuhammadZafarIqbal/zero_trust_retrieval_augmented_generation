@@ -27,6 +27,28 @@ function QueryForm() {
         return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
+    useEffect(() => {
+        const welcomeMessage = {
+            type: 'bot',
+            text: "👋 Hello! Welcome to the HR Assistant Chatbot.\n"
+                + "I'm here to help you quickly find answers to your HR-related questions, such as:\n\n"
+
+                + "- 📄 Company policies and procedures\n"
+                + "- 🧑‍💼 Employee benefits and compensation\n"
+                + "- 🕒 Leave balances and time-off requests\n"
+                + "- 🔒 Security and access policies\n"
+                + "- 🗂️ Department and organizational details\n\n"
+
+                + "Your queries are processed securely — we follow Zero Trust principles.\n\n"
+
+                + "Feel free to ask me something like:\n"
+                + "> What are the vacation policies and who is Alice Johnson's manager?\n"
+                + "> What is the maternity leave policy?\n",
+            timestamp: getTimestamp(),
+        };
+        setMessages([welcomeMessage]);
+    }, []);
+
     const handleQuery = async (e) => {
         e.preventDefault();
         if (!question.trim()) return;
@@ -89,7 +111,7 @@ function QueryForm() {
                         <div key={idx} className={`flex items-start gap-3 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                             {msg.type === 'bot' && <div className="text-2xl">🤖</div>}
                             <div className={`rounded-lg px-4 py-2 max-w-xs shadow-sm ${msg.type === 'user' ? 'bg-trusteq text-white' : 'bg-trusteq-light text-white'}`}>
-                                <p>{msg.text}</p>
+                                <p className="whitespace-pre-wrap">{msg.text}</p>
                                 <p className="text-xs text-gray-300 mt-1 text-right">{msg.timestamp}</p>
                             </div>
                             {msg.type === 'user' && <div className="text-2xl">🧑</div>}
